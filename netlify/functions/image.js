@@ -55,7 +55,6 @@ console.log({parsedUrl})
       : []
 
     if (!allowedDomains.includes(new URL(parsedUrl).hostname)) {
-  console.timeEnd("elapsed")
 
       return {
         statusCode: 403,
@@ -65,16 +64,13 @@ console.log({parsedUrl})
     imageUrl = parsedUrl
   }
 
-  console.log({imageUrl})
-  console.timeLog("elapsed")
+  console.timeLog("elapsed", "about to fetch")
 
   const req = fetch(imageUrl)
-  console.log(req)
-  console.timeLog("elapsed")
+  console.timeLog("elapsed", "requested")
 
   const imageData = await req
-console.log("fetched")
-console.timeLog("elapsed")
+console.timeLog("elapsed", "got response")
 if (!imageData.ok) {
     console.error(`Failed to download image ${imageUrl}. Status ${imageData.status} ${imageData.statusText}`)
   console.timeEnd("elapsed")
@@ -84,15 +80,11 @@ if (!imageData.ok) {
       body: imageData.statusText,
     }
   }
-console.log("buffering")
-console.timeLog("elapsed")
 
   const bufferData = await imageData.buffer()
-  console.timeLog("elapsed")
-console.log("buffered")
-  const type = getImageType(bufferData)
-  console.timeLog("elapsed")
-  console.log("buffered")
+console.timeLog("elapsed", "buffered")
+const type = getImageType(bufferData)
+  console.timeLog("elapsed", "got image type")
   if (!type) {
   console.timeEnd("elapsed")
 
@@ -136,8 +128,7 @@ console.log("got image size")
   if (!OUTPUT_FORMATS.has(ext)) {
     ext = 'jpg'
   }
-console.log("about to process")
-  console.timeLog("elapsed")
+  console.timeLog("elapsed", "about to process")
 
   // The format methods are just to set options: they don't
   // make it return that format.
@@ -149,8 +140,7 @@ console.log("about to process")
     .avif({ quality, force: ext === 'avif' })
     .resize(width, null, { withoutEnlargement: true })
     .toBuffer({ resolveWithObject: true })
-console.log("got buffer")
-    console.timeLog("elapsed")
+    console.timeLog("elapsed", "processed")
 
   if (imageBuffer.length > MAX_RESPONSE_SIZE) {
     return {

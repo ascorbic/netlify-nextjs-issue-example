@@ -24,6 +24,7 @@ const OUTPUT_FORMATS = new Set(['png', 'jpg', 'webp', 'avif'])
 
 // Function used to mimic next/image
 const handler = async (event) => {
+  console.time("elapsed")
   const [, , url, w = 500, q = 75] = event.path.split('/')
   // Work-around a bug in redirect handling. Remove when fixed.
   const parsedUrl = decodeURIComponent(url).replace('+', '%20')
@@ -61,12 +62,16 @@ console.log({parsedUrl})
   }
 
   console.log({imageUrl})
+  console.timeLog("elapsed")
 
   const req = fetch(imageUrl)
   console.log(req)
+  console.timeLog("elapsed")
+
   const imageData = await req
 console.log("fetched")
-  if (!imageData.ok) {
+console.timeLog("elapsed")
+if (!imageData.ok) {
     console.error(`Failed to download image ${imageUrl}. Status ${imageData.status} ${imageData.statusText}`)
     return {
       statusCode: imageData.status,
@@ -74,17 +79,23 @@ console.log("fetched")
     }
   }
 console.log("buffering")
+console.timeLog("elapsed")
+
   const bufferData = await imageData.buffer()
-
+  console.timeLog("elapsed")
+console.log("buffered")
   const type = getImageType(bufferData)
-
+  console.timeLog("elapsed")
+  console.log("buffered")
   if (!type) {
     return { statusCode: 400, body: 'Source does not appear to be an image' }
   }
 
   const dimensions = imageSize(bufferData)
-
+  console.timeLog("elapsed")
+console.log("got image size")
   if (width > dimensions.width) {
+    console.log("too big. redirecting")
     // We won't upsize images, and to avoid downloading the same size multiple times,
     // we redirect to the largest available size
     const Location = `/nextimg/${url}/${dimensions.width}/${q}`
@@ -115,6 +126,8 @@ console.log("buffering")
   if (!OUTPUT_FORMATS.has(ext)) {
     ext = 'jpg'
   }
+console.log("about to process")
+  console.timeLog("elapsed")
 
   // The format methods are just to set options: they don't
   // make it return that format.
@@ -126,6 +139,8 @@ console.log("buffering")
     .avif({ quality, force: ext === 'avif' })
     .resize(width, null, { withoutEnlargement: true })
     .toBuffer({ resolveWithObject: true })
+console.log("got buffer")
+    console.timeLog("elapsed")
 
   if (imageBuffer.length > MAX_RESPONSE_SIZE) {
     return {
@@ -133,6 +148,7 @@ console.log("buffering")
       body: 'Requested image is too large. Maximum size is 6MB.',
     }
   }
+  console.timeEnd("elapsed")
 
   return {
     statusCode: 200,

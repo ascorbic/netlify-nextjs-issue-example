@@ -64,7 +64,7 @@ console.log({parsedUrl})
 
   const req = fetch(imageUrl)
   console.log(req)
-  await req
+  const imageData = await req
 console.log("fetched")
   if (!imageData.ok) {
     console.error(`Failed to download image ${imageUrl}. Status ${imageData.status} ${imageData.statusText}`)

@@ -31,6 +31,8 @@ const handler = async (event) => {
   const width = parseInt(w)
 console.log({parsedUrl})
   if (!width) {
+  console.timeEnd("elapsed")
+
     return {
       statusCode: 400,
       body: 'Invalid image parameters',
@@ -53,6 +55,8 @@ console.log({parsedUrl})
       : []
 
     if (!allowedDomains.includes(new URL(parsedUrl).hostname)) {
+  console.timeEnd("elapsed")
+
       return {
         statusCode: 403,
         body: 'Image is not from a permitted domain',
@@ -73,6 +77,8 @@ console.log("fetched")
 console.timeLog("elapsed")
 if (!imageData.ok) {
     console.error(`Failed to download image ${imageUrl}. Status ${imageData.status} ${imageData.statusText}`)
+  console.timeEnd("elapsed")
+
     return {
       statusCode: imageData.status,
       body: imageData.statusText,
@@ -88,6 +94,8 @@ console.log("buffered")
   console.timeLog("elapsed")
   console.log("buffered")
   if (!type) {
+  console.timeEnd("elapsed")
+
     return { statusCode: 400, body: 'Source does not appear to be an image' }
   }
 
@@ -99,6 +107,8 @@ console.log("got image size")
     // We won't upsize images, and to avoid downloading the same size multiple times,
     // we redirect to the largest available size
     const Location = `/nextimg/${url}/${dimensions.width}/${q}`
+  console.timeEnd("elapsed")
+
     return {
       statusCode: 302,
       headers: {

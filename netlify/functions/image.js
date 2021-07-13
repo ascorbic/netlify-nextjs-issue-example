@@ -25,9 +25,10 @@ const OUTPUT_FORMATS = new Set(['png', 'jpg', 'webp', 'avif'])
 // Function used to mimic next/image
 const handler = async (event) => {
   console.time("elapsed")
-  const [, , url, w = 500, q = 75] = event.path.split('/')
+  const [, , url, w = 500, q = 75, o = 0] = event.path.split('/')
   // Work-around a bug in redirect handling. Remove when fixed.
   const parsedUrl = decodeURIComponent(url).replace('+', '%20')
+  const optimise = Boolean(o)
   let width = parseInt(w)
 console.log({parsedUrl})
   if (!width) {
@@ -135,8 +136,8 @@ console.log("got image size")
   // make it return that format.
   const { info, data: imageBuffer } = await sharp(bufferData)
     .rotate()
-    .jpeg({ quality, mozjpeg: true, force: ext === 'jpg' })
-    .png({ quality, palette: true, force: ext === 'png' })
+    .jpeg({ quality, mozjpeg: optimise, force: ext === 'jpg' })
+    .png({ quality, palette: optimise, force: ext === 'png' })
     .webp({ quality, force: ext === 'webp' })
     .avif({ quality, force: ext === 'avif' })
     .resize(width, null, { withoutEnlargement: true })

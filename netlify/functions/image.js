@@ -95,18 +95,19 @@ const type = getImageType(bufferData)
   console.timeLog("elapsed")
 console.log("got image size")
   if (width > dimensions.width) {
-    console.log("too big. redirecting")
+    console.log("too big!")
+    width = dimensions.width
     // We won't upsize images, and to avoid downloading the same size multiple times,
     // we redirect to the largest available size
-    const Location = `/nextimg/${url}/${dimensions.width}/${q}`
-  console.timeEnd("elapsed")
+  //   const Location = `/nextimg/${url}/${dimensions.width}/${q}`
+  // console.timeEnd("elapsed")
 
-    return {
-      statusCode: 302,
-      headers: {
-        Location,
-      },
-    }
+  //   return {
+  //     statusCode: 302,
+  //     headers: {
+  //       Location,
+  //     },
+  //   }
   }
 
   let { ext } = type

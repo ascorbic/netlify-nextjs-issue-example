@@ -28,7 +28,7 @@ const handler = async (event) => {
   const [, , url, w = 500, q = 75] = event.path.split('/')
   // Work-around a bug in redirect handling. Remove when fixed.
   const parsedUrl = decodeURIComponent(url).replace('+', '%20')
-  const width = parseInt(w)
+  let width = parseInt(w)
 console.log({parsedUrl})
   if (!width) {
   console.timeEnd("elapsed")
